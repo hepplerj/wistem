@@ -1,12 +1,12 @@
 Package: wistem
-Title: What the Package Does (One Line, Title Case)
+Title: WiSTEM Data Analysis
 Version: 0.0.0.9000
 Authors@R: 
-    person(given = "First",
-           family = "Last",
+    person(given = "Jason",
+           family = "Heppler",
            role = c("aut", "cre"),
-           email = "first.last@example.com")
-Description: What the package does (one paragraph)
+           email = "jheppler@unomaha.edu")
+Description: Data analysis for women in STEM publications.
 License: MIT + file LICENSE
 ByteCompile: true
 Encoding: UTF-8
