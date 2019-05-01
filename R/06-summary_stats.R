@@ -1,0 +1,116 @@
+# Summary statistics
+
+pub_counts <- count(data, pubtitle, sort = TRUE)
+
+# % of journals that accounted for % of the references
+# (i.e. 5% of the journals were responsible for 60% of the citations)
+
+pub_counts$pct <- pub_counts$n / sum(pub_counts$n)
+pub_counts
+
+# Number of journals (X%)
+
+count(journals, pubtitle, sort = TRUE)
+
+# Number of conference proceedings (X%)
+
+count(conferences, pubtitle, sort = TRUE)
+
+# NAME HERE had the greatest number of publications at XX,
+# followed by NAME HERE with X, and NAME HERE with XX
+
+count(data, pubtitle, sort = TRUE)
+
+## % of authors who write with a co-author
+authors_coauthor <- data %>%
+  select(author) %>%
+  rowwise %>%
+  mutate(solo = ifelse(str_detect(author, ";"), TRUE, FALSE))
+
+authors_coauthor %>%
+  group_by(solo) %>%
+  tally()
+# 522 coauthors, 125 solo authors
+
+coauthors_list <- authors_coauthor %>%
+  filter(solo == "TRUE") %>%
+  separate_rows(author, sep = ";") %>%
+  select(author) %>%
+  distinct()
+
+coauthors_list$author <- gsub("(.*)\\s+[A-Z]\\.?$", "\\1", coauthors_list$author)
+coauthors_list$author <- str_trim(coauthors_list$author)
+coauthors_list <- coauthors_list %>% distinct()
+
+total_authors <- data %>%
+  separate_rows(author, sep = ";") %>%
+  select(author) %>%
+  distinct()
+
+nrow(coauthors_list) / nrow(total_authors) * 100
+# 88.84% of the work is co-authored
+
+## X% of authors who are female who write with co-authors
+# merge authors_coauthor with gender_predicted_final to find this data
+# then subset by female
+
+author_gender_to_match <- gender_predicted %>%
+  select(author, gender) %>%
+  distinct()
+
+authors_coauthor_gender <- coauthors_list %>%
+  left_join(author_gender_to_match, by = "author")
+
+coauthors_female <- authors_coauthor_gender %>% filter(gender == "female")
+
+nrow(coauthors_female) / nrow(total_authors) * 100
+# 51.99%
+
+## X% of authors who are male who write with co-authors
+coauthors_male <- authors_coauthor_gender %>% filter(gender == "male")
+nrow(coauthors_male) / nrow(total_authors) * 100
+# 20.47%
+
+## X% of first authors who are male/female
+first_author_female <- author_order %>% filter(position == 1, gender == "female")
+nrow(first_author_female) / nrow(author_order) * 100
+# 21.88%
+
+first_author_male <- author_order %>% filter(position == 1, gender == "male")
+nrow(first_author_male) / nrow(author_order) * 100
+# 6.49%
+
+## X% of last authors who are male/female
+# Assuming here that "last" author could be second author, but falls anywhere
+# between 2 and 33.
+author_order %>%
+  group_by(position) %>%
+  tally()
+
+last_author_female <- author_order %>% filter(gender == "female", position %in% c(2:33))
+last_author_male <- author_order %>% filter(gender == "male", position %in% c(2:33))
+
+nrow(last_author_female) / nrow(author_order) * 100
+# 38.48%
+
+nrow(last_author_male) / nrow(author_order) * 100
+# 14.54%
+
+## X% of first authors who are female who co-author
+
+positions_to_match <- author_order %>% select(author, position)
+
+first_authors_coauthor_exerpt <- coauthors_list %>%
+  left_join(positions_to_match, by = "author") %>%
+  left_join(author_gender_to_match, by = "author")
+
+first_author_female_coauthor <- first_authors_coauthor_exerpt %>% filter(gender == "female", position == 1)
+
+nrow(first_author_female_coauthor) / nrow(first_authors_coauthor_exerpt) * 100
+# 20.25%
+
+## X% of last authors who are female who co-author
+
+last_author_female_coauthor <- first_authors_coauthor_exerpt %>% filter(gender == "female", position %in% c(2:33))
+nrow(last_author_female_coauthor) / nrow(first_authors_coauthor_exerpt) * 100
+# 39.72%
