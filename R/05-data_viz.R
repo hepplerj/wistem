@@ -166,3 +166,27 @@ ggraph(gender_tidy) +
        subtitle = "Authors corresponding journals.",
        caption = "Heidi Blackburn and Jason Heppler") +
   theme_graph()
+
+# Graph: Top ten journals that saw growth
+library(RColorBrewer)
+ggplot(journals_top_ten) +
+  geom_bar(aes(x = date, fill = pubtitle)) +
+  theme_jah() +
+  scale_fill_brewer(palette = "Set3")
+
+journals_top_ten_abbr <- journals %>% 
+  filter(pubtitle %in% top_ten_journals) %>% as.data.frame()
+
+ggplot(journals_top_ten_abbr) +
+  geom_bar(aes(x = date)) +
+  theme_bw() +
+  facet_grid(rows = vars(pubtitle))
+
+# Graph: Journals that support women as first author 
+# top 25 journals with female first authors
+ggplot(female_journalfirst_author %>% filter(n > 5), aes(reorder(pubtitle, -n))) + 
+  geom_bar() +
+  theme_minimal() +
+  fte_theme() +
+  theme(axis.text.x=element_text(angle =- 90, vjust = 0.5)) 
+
