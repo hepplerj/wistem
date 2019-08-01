@@ -57,12 +57,21 @@ gender_predicted$author <- str_trim(gender_predicted$author)
 rm(data_clean)
 
 # Separate out journal articles from conference proceedings.
+# NB: Proceedings from the Natl. Academy is not a conference proceeding, so we 
+# remove it and replace it in the journals dataframe.
 conferences <- data %>%
-  filter(str_detect(pubtitle, "Conference|Proceedings"))
+  filter(str_detect(pubtitle, "Conference|Proceedings")) %>% 
+  filter(pubtitle != "Proceedings of the National Academy of Sciences of the United States of America")
+
+pnasus <- data %>% 
+  filter(pubtitle == "Proceedings of the National Academy of Sciences of the United States of America")
 
 journals <- data %>%
-  filter(!str_detect(pubtitle, "Conference|Proceedings"))
+  filter(!str_detect(pubtitle, "Conference|Proceedings")) %>% 
+  bind_rows(pnasus)
 
+rm(pnasus)
+  
 conferences_solo_authors <- gender_predicted %>%
   filter(str_detect(pubtitle, "Conferences|Proceedings"))
 

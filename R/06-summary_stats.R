@@ -82,16 +82,32 @@ nrow(coauthors_unknown) / nrow(total_authors) * 100
 ## X% of first authors who are male/female
 # ---------------------------------------------------------------------------------------------------------
 first_author_female <- author_order %>% filter(position == 1, gender == "female")
-nrow(first_author_female) / nrow(author_order) * 100
-# 21.88%
+nrow(first_author_female) / nrow(author_order %>% filter(position == 1)) * 100
+# 60.72%
+nrow(unique(first_author_female %>% select(author)))
+# 357
 
 first_author_male <- author_order %>% filter(position == 1, gender == "male")
-nrow(first_author_male) / nrow(author_order) * 100
-# Answer: 6.49%
+nrow(first_author_male) / nrow(author_order %>% filter(position == 1)) * 100
+# Answer: 18%
+nrow(unique(first_author_male %>% select(author)))
+# 110
 
 first_author_unknown <- author_order %>% filter(position == 1, is.na(gender))
-nrow(first_author_unknown) / nrow(author_order) * 100
-# Answer: 7.66%
+nrow(first_author_unknown) / nrow(author_order %>% filter(position == 1)) * 100
+# Answer: 21.27%
+nrow(unique(first_author_unknown %>% select(author)))
+# 88
+
+nrow(first_author_female %>% filter(date == 2008))
+nrow(first_author_female %>% filter(date == 2018))
+((113/3)^(1/11) - 1) * 100
+# 39.08%
+
+nrow(first_author_male %>% filter(date == 2008))
+nrow(first_author_male %>% filter(date == 2018))
+((23/6)^(1/11) - 1) * 100
+# 12.99%
 
 ## X% of last authors who are male/female
 # ---------------------------------------------------------------------------------------------------------
@@ -189,9 +205,38 @@ top_ten_journals <- c("Journal of Women and Minorities in Science and Engineerin
                       "Psychology of Women Quarterly", "Research in Higher Education", 
                       "Journal of vocational behavior", "PLoS ONE", 
                       "Journal of Diversity in Higher Education")
+
+top_ten_publishers <- c("Sage Publications, Inc.",
+                        "Springer New York LLC",
+                        "Elsevier Inc.",
+                        "Routledge",
+                        "American Society of Engineering Education",
+                        "Wiley-Blackwell Publishing, Inc.",
+                        "American Psychological Association",
+                        "Begell House, Inc.",
+                        "Frontiers Research Foundation",
+                        "M D P I AG")
+
+top_ten_conferences <- c("ASEE Annual Conference and Exposition, Conference Proceedings",
+                         "Proceedings of the National Academy of Sciences of the United States of America",
+                         "2007 37th Annual Frontiers In Education Conference - Global Engineering: Knowledge Without Borders, Opportunities Without Passports",
+                         "2014 IEEE Frontiers in Education Conference (FIE) Proceedings",
+                         "7th IEEE GCC Conference and Exhibition (GCC)",
+                         "ACM Conference on Innovation and Technology in Computer Science Education",
+                         "ACM International Conference on Measurement and Modeling of Computer Systems",
+                         "AIP Conference Proceedings",
+                         "2016 International Conference on Computational Science and Computational Intelligence, CSCI 2016",
+                         "Proceedings of the 7th IEEE Integrated STEM Education Conference")
+
 journals_top_three <- journals %>% 
   filter(pubtitle %in% top_three_journals) %>% as.data.frame()
 journals_top_ten <- journals %>% 
+  filter(pubtitle %in% top_ten_journals) %>% as.data.frame()
+conference_top_ten_abbr <- conferences %>% 
+  filter(pubtitle %in% top_ten_conferences) %>% as.data.frame()
+publishers_top_ten_abbr <- journals %>% 
+  filter(publisher %in% top_ten_publishers) %>% as.data.frame()
+journals_top_ten_abbr <- journals %>% 
   filter(pubtitle %in% top_ten_journals) %>% as.data.frame()
 
 ## Top publisher with topic three journal names (this might be trickier)
@@ -211,5 +256,5 @@ pub_top_three_journals <- pub_ownership %>%
             arrange(desc(pub_publisher_count), desc(pub_title_count)) %>% 
                 distinct(pubtitle, .keep_all=TRUE) %>% 
                 group_by(publisher) %>% slice(1:3)
-write_csv(pub_top_three_journals, "~/Desktop/topthree.csv")
+write_csv(pub_top_three_journals, "analysis/data/derived_data/topthree.csv")
 
