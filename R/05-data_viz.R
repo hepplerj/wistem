@@ -71,13 +71,15 @@ ggplot(author_order, aes(position)) +
 first_authorship_by_year <- ggplot(author_order %>% filter(position == 1) %>% drop_na(date, gender), aes(date)) +
   geom_bar() +
   facet_grid(. ~ gender) +
-  labs(title = "First author gender by year") +
+  labs(title = "First author gender by year",
+       caption = "CC-BY | Heidi Blackburn and Jason Heppler") +
   fte_theme() +
   rotate_x_axis() +
   theme(panel.background=element_rect(fill="white", color="white")) +
   theme(plot.background=element_rect(fill="white", color="white")) +
   theme(panel.border=element_rect(color="white"))
 ggsave(filename = "analysis/figures/first_authorship_by_year.jpg", plot = first_authorship_by_year, dpi = 300)
+ggsave(filename = "analysis/figures/first_authorship_by_year.tiff", plot = first_authorship_by_year, dpi = 300)
 
 # Stacked barchart of gender by year
 # Useful chart.

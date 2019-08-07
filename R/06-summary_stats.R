@@ -286,3 +286,9 @@ female_social_science_authors_solo <- gender_predicted %>%
 
 nrow(female_social_science_authors_solo) / nrow(all_social_science_authors)
 # Answer: 25.1%
+
+## Which journals have the most collaborative authors? 
+
+journals %>% filter(str_detect(journals$author, "; ")) %>%
+  group_by(pubtitle) %>% 
+  tally(sort = T)
