@@ -228,6 +228,10 @@ top_ten_conferences <- c("ASEE Annual Conference and Exposition, Conference Proc
                          "2016 International Conference on Computational Science and Computational Intelligence, CSCI 2016",
                          "Proceedings of the 7th IEEE Integrated STEM Education Conference")
 
+social_science_journals <- c("Sex Roles", "Social Sciences", "Frontiers in Psychology",
+                             "Psychology of Women Quarterly", "Research in Higher Education",
+                             "Journal of vocational behavior", "Journal of Diversity in HIgher Education")
+
 journals_top_three <- journals %>% 
   filter(pubtitle %in% top_three_journals) %>% as.data.frame()
 journals_top_ten <- journals %>% 
@@ -238,6 +242,9 @@ publishers_top_ten_abbr <- journals %>%
   filter(publisher %in% top_ten_publishers) %>% as.data.frame()
 journals_top_ten_abbr <- journals %>% 
   filter(pubtitle %in% top_ten_journals) %>% as.data.frame()
+
+journals_social_science <- journals_top_ten %>% 
+  filter(pubtitle %in% social_science_journals) %>% as.data.frame()
 
 ## Top publisher with topic three journal names (this might be trickier)
 pub_ownership_titles_count <- data %>% 
@@ -258,3 +265,24 @@ pub_top_three_journals <- pub_ownership %>%
                 group_by(publisher) %>% slice(1:3)
 write_csv(pub_top_three_journals, "analysis/data/derived_data/topthree.csv")
 
+## Social science journals authors
+
+### % of authors in soc sci journals women
+female_social_science_authors <- gender_predicted %>% 
+  filter(gender == "female", pubtitle %in% social_science_journals) %>% 
+  distinct(author)
+
+all_social_science_authors <- gender_predicted %>% 
+  filter(pubtitle %in% social_science_journals) %>% 
+  distinct(author)
+
+nrow(female_social_science_authors) / nrow(all_social_science_authors)
+# Answer: 63.12%
+
+### % of women as first authors in soc sci journals
+female_social_science_authors_solo <- gender_predicted %>% 
+  filter(pubtitle %in% social_science_journals, author %in% female_first_or_solo$author) %>% 
+  distinct(author)
+
+nrow(female_social_science_authors_solo) / nrow(all_social_science_authors)
+# Answer: 25.1%

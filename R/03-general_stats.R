@@ -25,6 +25,29 @@ female_authors_collapsed <- female_authors_all %>%
 list_authors_female <- data %>% filter(grepl(female_authors_collapsed, author))
 nrow(list_authors_female) / nrow(data) * 100
 
+# tests ------------------
+data %>%
+  rownames_to_column('rn') %>% 
+  separate_rows(author, sep=";\\s*") %>%
+  inner_join(female_authors_all)%>% 
+  group_by(rn, pubtitle) %>% 
+  summarise(author = str_c(author, collapse = "; ")) %>%
+  ungroup %>%
+  select(names(data))
+
+data2 <- data %>%
+  # If you want to keep the original names duplicate column first
+  mutate(author_sep = author) %>%
+  # Take each delimited author and give them their own row (tidy data)
+  tidyr::separate_rows(author_sep,sep = ";") %>%
+  # Filter to only keep rows where the individual author is the other vector
+  filter(author_sep %in% female_authors_all$author) %>%
+  # Remove that extra column we created
+  select(-author_sep) %>%
+  # Remove duplicate rows in case more than one author is the delimited list was female
+  distinct()
+# tests --------------------
+
 # Top journals
 journals %>%
   group_by(pubtitle) %>%
