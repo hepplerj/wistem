@@ -1,7 +1,5 @@
 # Read and prepare data
-
-library(tidyverse)
-library(jahMisc)
+suppressPackageStartupMessages(library(tidyverse))
 
 # Read data
 data <- readxl::read_xlsx("analysis/data/raw_data/WiSTEM Data10.xlsx")

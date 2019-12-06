@@ -1,5 +1,6 @@
 # Data visualizations
 library(jahMisc)
+library(ggthemes)
 rotate_x_axis <- function() {
   ggplot2::theme(axis.text.x=element_text(angle =- 90, vjust = 0.5))
 }
@@ -41,7 +42,7 @@ theme_agile <- function(base_size = 10, base_family = "Arial", lines_lwd = 0.50,
 # Plot the number of publications per year
 ggplot(data %>% drop_na(date), aes(x = date)) +
   geom_bar() +
-  theme_minimal()
+  theme_clean()
 
 # Plot the number of articles per publication
 ggplot(data, aes(x = pubtitle)) +

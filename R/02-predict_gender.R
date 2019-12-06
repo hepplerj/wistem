@@ -95,3 +95,4 @@ write_csv(gender_predicted, "analysis/data/derived_data/gender_predicted.csv")
 write_csv(conferences, "analysis/data/derived_data/conferences.csv")
 write_csv(journals, "analysis/data/derived_data/journals.csv")
 write_csv(conf_journal_merged, "analysis/data/derived_data/conferences_journals_labeled.csv")
+

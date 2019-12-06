@@ -14,6 +14,7 @@ network_data <- data
 network_data$id <- 1:nrow(network_data)
 
 coauthors <- network_data %>%
+  #filter(grepl(';', author)) %>% 
   select(author, title, pubtitle, date, id) %>% 
   unnest(author = str_split(author, ";"))
 
